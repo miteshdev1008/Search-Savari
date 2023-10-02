@@ -8,31 +8,8 @@ const usermodel = require('../models/usermodel');
 
 const addvechiledetails=async(req,res)=>{
     
-    // const prop=['no','make','model','seatingcap','type','ac'];
-    // const empty=[];
-    //  for(var i=0;i<=prop.length;i++){
-    //       if(req.body.hasOwnProperty(prop[i]))
-    //       continue;
-    //       else
-    //       empty.push(prop[i]); 
-    //  }
-   //  console.log(empty);
-    //  empty.pop(empty.length-1);
-    //  const spcae="please enter field :"+empty.toString();
-    //  if(empty.length!=0)return res.status(417).json({success:false,status:417,msg:spcae});
-    // const numeric=new RegExp('(?=.*[0-9])');
-    // const checkcap=/[A-Za-z!@#$%^&*()]/;
-    // console.log(req.body.seatingcap.match(checkcap)!=null);
-    //   if((req.body.seatingcap.match(checkcap))!=null);
-    //   {
-    //     console.log("yyes points");
-        
-    //   }
 
-    // if(!isNaN(req.body.seatingcap)) return res.status(417).json({status:417,success:false,msg:'please enter seating cap in number'});
-    
-    // console.log(req.files);
-    // console.log(typeof(req.body.seatingcap));
+
     console.log(parseInt(req.body.seatingcap));
     var value = Number(req.body.seatingcap);
     
