@@ -47,23 +47,7 @@ const addvechiledetails=async(req,res)=>{
 }
 
 const addagency=async(req,res)=>{
-//     const prop=['name','number','email','address'];
-//     const empty=[];
-//    // console.log(req.body.prop[0]);
-//      for(var i=0;i<=prop.length;i++){
-//           if(req.body.hasOwnProperty(prop[i]))
-//           continue;
-//           else
-//           empty.push(prop[i]); 
-//      }
-//    console.log(empty);
-//      empty.pop(empty.length-1);
-//      console.log(empty);
-//      const space="please enter field :"+empty.toString();
-//     if(empty.length!=0)return res.status(417).json({success:false,status:417,msg:space});
-    //  const userid=req.user[0].id;
-    //  const checkagnecy=await agencymodel.find({uploadedby:userid});
-    //  if(checkagnecy.length>0) return res.status(417).json({success:false,msg:'one user can only make one agency'});
+
 
 if(!req.body.name)return res.status(417).json({success:false,msg:'please enter name'});
     
