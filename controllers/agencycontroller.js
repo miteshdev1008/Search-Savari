@@ -7,9 +7,7 @@ const agency = require('../models/agency');
 const usermodel = require('../models/usermodel');
 
 const addvechiledetails=async(req,res)=>{
-    
-
-
+    try{    
     console.log(parseInt(req.body.seatingcap));
     var value = Number(req.body.seatingcap);
     
@@ -43,12 +41,15 @@ const addvechiledetails=async(req,res)=>{
     // console.log(vechile);
     const vechilesavedetails=await vechile.save();
     if(!vechilesavedetails) return res.status(417).json({success:false,msg:'failed to save vechile'})
-    res.status(200).json({success:true,status:200,msg:'vechile added successfully'});
+    res.status(200).json({success:true,status:200,msg:'vechile added successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const addagency=async(req,res)=>{
 
-
+try{
 if(!req.body.name)return res.status(417).json({success:false,msg:'please enter name'});
     
     if(!req.body.address)return res.status(417).json({status:417,success:false,msg:'please enter address'});
@@ -70,15 +71,14 @@ if(!req.body.name)return res.status(417).json({success:false,msg:'please enter n
         const agencydetails=new agencymodel({name:req.body.name,number:req.body.number,email:req.body.email,address:req.body.address,registrationdocument:img,uploadedby:req.user[0]._id});
    
     const savedetails=await agencydetails.save();
-    res.json({success:true,status:200,msg:'agency added successfully'});
+    res.json({success:true,status:200,msg:'agency added successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const editagnecy=async(req,res)=>{
-    // if (Object.keys(req.body).length === 0) return res.status(404).json({success:false,msg:'please enter data to update'});
-    // res.json(req.user);
-    // if(req.body.number){
-
-    // }
+   try{
     if(req.body.number){
         if(isNaN(req.body.number)) return res.status(417).json({success:false,msg:'please enter no only'})
         if(req.body.number.length!=10) return res.status(417).json({success:false,msg:'please enter 10 digits  only'})
@@ -101,10 +101,14 @@ const editagnecy=async(req,res)=>{
         const findagnecy=await agencymodel.updateOne({uploadedby:userid},{$set:req.body},{new:true});
         const agnecy=await agencymodel.find({uploadedby:userid},{_id:0},{uploadedby:0});
         res.json({success:true,status:200,msg:'agnecy updated successfully'});
+    }}
+    catch(e){
+         res.status(200).json({success:false,message:e});
     }
 }
 
 const editdocuments=async(req,res)=>{
+    try{
     // res.json('hello wprlds');
     userid=req.user[0]._id;
     console.log(req.files);
@@ -122,30 +126,24 @@ const editdocuments=async(req,res)=>{
     const newuser=await usermodel.findByIdAndUpdate(userid,{aadharcardfront:adf,aadharcardback:adb,pancard:pancard},{new:true})
     
     if(!newuser) return res.status(417).json({success:false,})
-    res.status(200).json({success:true,msg:'profile document updated successfully'});
+    res.status(200).json({success:true,msg:'profile document updated successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const vechilelist=async(req,res)=>{
+    try{
     var allvechile=await vechilemodel.find({uploadedby:req.user[0]._id},{_id:1,assigndriver:1,make:1,model:1,no:1});
     if(allvechile==null) allvechile='empty';
-    res.status(200).json({success:true,data:allvechile}); 
+    res.status(200).json({success:true,data:allvechile}); }
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const adddriver=async(req,res)=>{
-//     const prop=['name','no'];
-//     const empty=[];
-//      for(var i=0;i<=prop.length;i++){
-//           if(req.body.hasOwnProperty(prop[i]))
-//           continue;
-//           else
-//           empty.push(prop[i]); 
-//      }
-//    //  console.log(empty);
-//      empty.pop(empty.length-1);
-//      const spcae="please enter field :"+empty.toString();   
-//      if(empty.length!=0)return res.status(417).json({success:false,status:417,msg:spcae});
-   
-    // if(isNaN(req.body.no)) return res.json({success:false,msg:'please enter number only'});
+try{
 
     if(req.body.password!=req.body.conformpassword) return res.json({success:false,msg:'password and conformpassword doesn\'t match'});
      const checkpass=passcheck(req.body.password);
@@ -168,12 +166,15 @@ const adddriver=async(req,res)=>{
      
      const savedriver=await newdriver.save();
 
-     res.status(200).json({success:true,msg:'driver add successflly'});
+     res.status(200).json({success:true,msg:'driver add successflly'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 
 }
 
 const editdriver=async(req,res)=>{
-
+try{
     if(!req.body.updateuserid) return res.status(417).json({success:false,msg:'please enter userid'})
     if(!req.body.number) return res.status(417).json({success:false,status:417,msg:'please enter no to update'});
 
@@ -183,18 +184,26 @@ const editdriver=async(req,res)=>{
     
     const updatedata=await drivermodel.findByIdAndUpdate(req.body.updateuserid,{$set:req.body})
 
-    res.status(200).json({success:true,msg:'driver data hasbeen updated successfully'});
+    res.status(200).json({success:true,msg:'driver data hasbeen updated successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 
 }
 
 const driverlist=async(req,res)=>{
+    try{
     console.log("object");
     var alldriver=await drivermodel.find({$and:[{uploadedby:req.user[0]._id},{isavilable:true}]},{_id:1,profilepic:1,name:1});
     if(alldriver==null) alldriver='empty';
-    return res.status(200).json({success:true,status:200,data:alldriver});
+    return res.status(200).json({success:true,status:200,data:alldriver});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const assigneddriver=async(req,res)=>{
+    try{
     const vechileid=req.body.vechileid;
     const driverid=req.body.driverid;
     const driverdata=await drivermodel.findById(driverid);
@@ -206,18 +215,26 @@ const assigneddriver=async(req,res)=>{
     const vechile=await vechilemodel.findByIdAndUpdate(vechileid,{$push:{assigndriver:details}},{new:true});
     // const updatedriver=await drivermodel.findByIdAndUpdate(driverid,)
     const statusupdate=await drivermodel.findByIdAndUpdate(driverid,{isavilable:false,assigendvechile:vechileid});
-    res.json({success:true,msg:'driver assigned successfully'});
+    res.json({success:true,msg:'driver assigned successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const addroute=async(req,res)=>{
+    try{
     const userid=req.user[0]._id;
     const agnecyid=await agencymodel.find({uploadedby:userid});
     // console.log(agnecyid[0]._id);   
     const rout= await new routemodel({from:req.body.from,via:req.body.via,to:req.body.to,agencyid:agnecyid[0]._id}).save();
-    res.json({success:true,msg:'routes add successfully',data:rout});
+    res.json({success:true,msg:'routes add successfully',data:rout});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const getroute=async(req,res)=>{
+    try{
     // res.send('hello world');
     const userid=req.user[0]._id;
     const agnecyid=await agencymodel.find({uploadedby:userid});
@@ -225,28 +242,41 @@ const getroute=async(req,res)=>{
     if(!agnecyid.length) return res.status(417).json({success:false,msg:'please first create agency'})
     var rout= await routemodel.find({agencyid:agnecyid[0]._id},{agencyid:0,__v:0});
     if(rout==null) rout='empty';
-   res.status(200).json({success:true,msg:'all yours route is',data:rout});
+   res.status(200).json({success:true,msg:'all yours route is',data:rout});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const editroute=async(req,res)=>{
+    try{
     //console.log(agnecyid[0]._id);   
     const rout= await routemodel.findByIdAndUpdate(req.body.id,{$set:req.body});
-    res.json({success:true,msg:'routes updated successfully',data:rout});
+    res.json({success:true,msg:'routes updated successfully',data:rout});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const deleteroute=async(req,res)=>{ 
+    try{
     const rout= await routemodel.findByIdAndDelete(req.body.id);
-    res.json({success:true,msg:'routes deleted successfully',data:rout});
+    res.json({success:true,msg:'routes deleted successfully',data:rout});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
 const deletedriver=async(req,res)=>{
+    try{
     // res.json('hello world');
     const deletedriver=await drivermodel.findByIdAndDelete(req.body.id);
-    res.json({success:true,msg:'driver deleted successfully'});
+    res.json({success:true,msg:'driver deleted successfully'});}
+    catch(e){
+         res.status(200).json({success:false,message:e});
+    }
 }
 
-const deletevechile=async(req,res)=>{
-    res.json('hello world');
-}
+
 
 module.exports={deletedriver,editdocuments,editroute,deleteroute,getroute,addroute,assigneddriver,addagency,addvechiledetails,editagnecy,vechilelist,adddriver,editdriver,driverlist}
