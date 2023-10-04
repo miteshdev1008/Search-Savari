@@ -11,7 +11,7 @@ const {otpexpires,genreferal,createtoken,sendemail}=require('../middleware/auth'
 const agency = require('../models/agency');
 
 const forgotpasswordbymobile=async(req,res)=>{
-  // res.json('hello');
+try{
   const user=req.user[0].mobile;
   const no=req.body.no;
   if(user!=no) return res.status(417).json({success:false,msg:'please enter valid no'});
@@ -21,21 +21,26 @@ const forgotpasswordbymobile=async(req,res)=>{
   if(finduser.length=0) return res.status(417).json({success:false,msg:'please enter phone no which is related to this account'});
 
   res.json({success:true,msg:'otp sent successfully'});
-
+}
+catch(e){
+    res.json({success:false,msg:e});
+}
   // const token=createtoken(finduser._id);
   //   res.json({tokenis:token});
 }
 
 const deleteuser=async(req,res)=>{
-  // res.json('hello from delete user');
+ try{
   const userid=req.user[0]._id;
   const deleteuser=await usermodel.findByIdAndDelete(userid);
-  res.json({success:true,msg:'deleted user successfully'});
+  res.json({success:true,msg:'deleted user successfully'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const resetpasswordbymobile=async(req,res)=>{
-  // res.json('hello');
-  // res.json(req.user[0]);
+ try{
   if(!req.body.newpass&&!req.body.conformpass) return res.json('please enter both pass');
 
   const passc=passcheck(req.body.newpass);
@@ -45,25 +50,16 @@ const resetpasswordbymobile=async(req,res)=>{
 
 const updateuser=await usermodel.findByIdAndUpdate(req.user[0]._id,{$set:{password:req.body.newpass}},{new:true});
  //console.log(updateuser);
-res.status(200).json({success:true,msg:'password change successfully'});
+res.status(200).json({success:true,msg:'password change successfully'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 
 }
 
 const signup=async(req,res)=>{
     
-  // const {otp,mobile}=req.body;
-  // const no=mobile;
-  // const verifyuser=await otpmodel.find({no:no});
-  // time=verifyuser[0].updatedAt;
-  // console.log(time);
-  // const checklimit=otpexpires(time);
-  // console.log(checklimit);
-  // if(checklimit==false) return res.status(401).json({success:false,msg:'your otp has been expires'});
-
-  // console.log(verifyuser[0].otp+" "+otp);
-  // if(verifyuser[0].otp!=otp) return res.status(417).json({success:false,data:'sorry wrong user'});
-
-     //  if(!req.body.name&&!req.body.email&&!req.body.password&&!req.body.mobile) return res.status(400).json('please enter all fields')
+try{
        const prop=['name','email','password','mobile','conformpassword'];
       const empty=[];
        for(var i=0;i<=prop.length;i++){
@@ -127,10 +123,14 @@ const signup=async(req,res)=>{
         if(!usersave) return res.status(417).json({success:false,msg:'failed to save details'});
        
           const tk=createtoken(usersave._id);
-        res.json({success:true,status:200,data:{response,token:tk}});}
+        res.json({success:true,status:200,data:{response,token:tk}});}}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const referalhistory=async(req,res)=>{
+  try{
   const userid=req.user[0]._id;
   const findusers=await usermodel.findById(userid)
   console.log(findusers);
@@ -162,11 +162,14 @@ const year=date.split('/')[2];
     console.log(username);
  }
 
-res.json({success:true,msg:'here is your details',data:{username,balance}});
+res.json({success:true,msg:'here is your details',data:{username,balance}});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const sendotp=async(req,res)=>{
-
+try{
   const {phone_no}=req.body;
  console.log("object");
   if(!phone_no) return res.status(417).json({success:false,msg:'please enter cell number'});
@@ -211,10 +214,14 @@ const sendotp=async(req,res)=>{
       }
       else{
         res.json({success:true,msg:'error while generating otp'});
-      }
+      }}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const verifyotp=async(req,res)=>{
+  try{
    const phone_no=req.body.phone_no;
    const otp=req.body.otp;
    console.log(!otp);
@@ -235,10 +242,14 @@ const verifyotp=async(req,res)=>{
   const finduserid=await usermodel.find({mobile:phone_no})
   const tk=createtoken(finduserid[0]._id)
   console.log(finduserid[0]._id);
-  return res.status(200).json({success:true,data:tk});
+  return res.status(200).json({success:true,data:tk});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const login=async(req,res)=>{
+  try{
     const user=req.body;
    
     if(!user.email&&!user.password) return res.json({success:false,status:417,msg:'please enter email and password'})
@@ -257,10 +268,14 @@ if(userfind.length>0&&userfind[0].password==user.password){
   const token=createtoken(userfind[0]._id);
     res.json({success:true,status:200,data:{response,token:token}})
 }
-else{res.status(417).json({success:false,status:417,data:'sorry wrong password'});}
+else{res.status(417).json({success:false,status:417,data:'sorry wrong password'});}}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const forgotpassword=async(req,res)=>{
+  try{
     if(!req.body.email) return res.status(417).json({success:false,status:417,msg:'please enter email'});
     const emailc=isemail(req.body.email);
     if(emailc!=true) return res.status(417).json({success:false,status:417,msg:emailc});
@@ -275,10 +290,14 @@ const forgotpassword=async(req,res)=>{
     }
     else{
         res.status(417).json({success:false,status:417,msg:'usernot found'});
-    }
+    }}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const resetpass=async(req,res)=>{
+  try{
 if(!req.body.pass&&!req.body.conformpass) return res.json({success:false,status:404,msg:'please enter both password'})
      const userid=req.params.id.slice(1);
      const usertoken=req.params.token;
@@ -295,23 +314,28 @@ if(!req.body.pass&&!req.body.conformpass) return res.json({success:false,status:
      res.json({success:true,status:200,data:'password reset successfully'});}
      else res.json({success:false,status:417,msg:'password dont match'})
   }
-  else{res.json({success:false,status:417,msg:'something went wrong'});}
+  else{res.json({success:false,status:417,msg:'something went wrong'});}}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 
 }
 
 const getmyprofile=async(req,res)=>{
+  try{
     const profile=await usermodel.findOne({_id:req.user[0]._id},{email:1,mobile:1,address:1,city:1,pincode:1,referalcode:1,aadharcardback:1,aadharcardfront:1,pancard:1});
     //console.log(profile);
     var agnecydetails=await agency.findOne({uploadedby:profile._id},{name:1,number:1,email:1,address:1});
    // const vechile=await vechilemodel.find({uploadedby:profile._id});
    if(agnecydetails==null) agnecydetails='empty';
-    res.json({success:true,status:200,data:{profile:profile,agnecydetails:agnecydetails}});    
+    res.json({success:true,status:200,data:{profile:profile,agnecydetails:agnecydetails}});    }
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const editprofile=async(req,res)=>{
-    // res.json("hello world");
-   // if (Object.keys(req.body).length === 0) return res.status(404).json({success:false,msg:'please enter all fields'});
-    //console.log(req.user);
+    try{
     if(req.body.mobile){
         if(isNaN(req.body.mobile)) return res.status(417).json({success:false,msg:'please enter no only'})
         if(req.body.mobile.length!=10) return res.status(417).json({success:flse,msg:'please enter no only'})
@@ -345,10 +369,14 @@ const editprofile=async(req,res)=>{
       // const updateprofile=await usermodel.findByIdAndUpdate(id,{name:user.name,password:user.password,mobile:user.mobile,email:user.email});
        const updateprofile=await usermodel.findByIdAndUpdate(id,{$set:user},{new:true});
        res.json({success:true,status:200,data:updateprofile})
-   }
+   }}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const changepass=async(req,res)=>{
+  try{
     const prop=['oldpassword','newpassword','conformpassword'];
     const empty=[];
      for(var i=0;i<=prop.length;i++){
@@ -376,15 +404,23 @@ const changepass=async(req,res)=>{
     }
      else{
             res.json({status:417,success:false,msg:'your old password is wrong'});
-     }
+     }}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const alluser=async(req,res)=>{
+  try{
   const alluser=await demomodel.find({isdeleted:false}).select('num');
-  res.json(alluser);
+  res.json(alluser);}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const deleteusersoft=async(req,res)=>{
+  try{
   const no=req.body.no;
   console.log(no);
   const checkuser=await demomodel.find({num:no});
@@ -392,15 +428,23 @@ const deleteusersoft=async(req,res)=>{
   if(!checkuser.length>0) return res.json({msg:'provide user not found'})
   const alluser=await demomodel.updateOne({num:no},{$set:{isdeleted:true}},{new:true});
   console.log(alluser);
-  res.json({success:true,msg:'ok deleted user'});
+  res.json({success:true,msg:'ok deleted user'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const deleteduser=async(req,res)=>{
+  try{
   const deleteuser=await demomodel.find({isdeleted:true});
-  res.json(deleteuser);
+  res.json(deleteuser);}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const harddelete=async(req,res)=>{
+  try{
   const no=req.body.no;
   console.log(no);
   const checkuser=await demomodel.find({num:no});
@@ -408,10 +452,14 @@ const harddelete=async(req,res)=>{
   if(!checkuser.length>0) return res.json({msg:'provide user not found'})
   const alluser=await demomodel.deleteOne({num:no});
   console.log(alluser);
-  res.json({success:true,msg:'ok deleted user'});
+  res.json({success:true,msg:'ok deleted user'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const createuserno=async(req,res)=>{
+  try{
   // res.json('createuser');
   const no=req.body.no;
   console.log(no);
@@ -419,10 +467,14 @@ const createuserno=async(req,res)=>{
   console.log(newno);
   const saveno=await newno.save();
   console.log(saveno);
-  res.json({success:true,msg:'data added successfully'});
+  res.json({success:true,msg:'data added successfully'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 const retriveruser=async(req,res)=>{
+  try{
   const {no}=req.body;
   const finduser=await demomodel.find({num:no});
   
@@ -431,7 +483,10 @@ const retriveruser=async(req,res)=>{
   if(finduser.isdeleted==false) return res.json({msg:'sorry you can\'t retrive this user'});
 
   const retriveuser=await demomodel.updateOne({num:no},{$set:{isdeleted:false}},{new:true});
-  res.json({msg:'user retrived successfully'});
+  res.json({msg:'user retrived successfully'});}
+  catch(e){
+    res.json({success:false,msg:e});
+}
 }
 
 module.exports={retriveruser,createuserno,alluser,deleteusersoft,harddelete,deleteduser,deleteuser,referalhistory,resetpasswordbymobile,forgotpasswordbymobile,verifyotp,signup,login,forgotpassword,resetpass,getmyprofile,editprofile,changepass,sendotp}
